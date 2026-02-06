@@ -1,0 +1,16 @@
+#jenkins installation on amazonlinux
+#!/bin/bash
+wget -O /etc/yum.repos.d/jenkins.repo \
+    https://pkg.jenkins.io/redhat-stable/jenkins.repo
+	
+sudo yum upgrade -y
+
+# Add required dependencies for the jenkins package
+yum install java-21-amazon-corretto-devel -y
+yum install fontconfig java-21-openjdk 
+yum install jenkins -y
+systemctl daemon-reload
+systemctl restart jenkins
+systemctl enable jenkins
+
+
