@@ -10,6 +10,8 @@ systemctl disable --now ufw
 sudo apt update -y
 sudo apt install linux-headers-$(uname -r) -y
 #sudo vmware-modconfig --console --install-all
+
+load the necessary kernel modules:
 #overlay and br_netfilter need to be enabled in linux before installing on master and slave
 
 cat <<EOF | sudo tee /etc/modules-load.d/k8s.conf
@@ -37,13 +39,19 @@ sudo sysctl --system
 #Install this on all master and worker nodes:
 
 sudo apt install -y curl
+
+#Install and Configure Containerd
 sudo apt update && sudo apt install -y containerd
 sudo mkdir -p /etc/containerd
 containerd config default | sudo tee /etc/containerd/config.toml > /dev/null
 sudo systemctl restart containerd
 sudo systemctl enable containerd
 sudo ctr version
+
+#Add Kubernetes Package Repository
+
 #sudo apt update && sudo apt install -y curl gnupg2 software-properties-common apt-transport-https ca-certificates
+
 sudo rm -f /etc/apt/sources.list.d/kubernetes.list
 sudo mkdir -p /etc/apt/keyrings
 curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key |  sudo gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
@@ -56,15 +64,14 @@ sudo apt-mark hold kubelet kubeadm kubectl
 kubeadm version
 kubectl version --client
 
-Initialize Kubernetes Cluster on masternode
-
-Check the IP Address which you want to publish to your worker nodes. In my case since my first adapter is NAT which has a static IP of 10.0.2.15, 
-so I want to use my secondary Host-Only network adapter for all internal communication within cluster.
+#Initialize Kubernetes Cluster on masternode: 
+#Check the IP Address which you want to publish to your worker nodes. In my case since my first adapter is NAT which has a static IP of 10.0.2.15, 
+#so I want to use my secondary Host-Only network adapter for all internal communication within cluster.
  
- NAT IP : master node:192.168.153.129 and client node: 192.168.153.131
- Host-Only: master node:192.168.40.129 and client node: 192.168.40.129
+ #NAT IP : master node:192.168.153.129 and client node: 192.168.153.131
+ #Host-Only: master node:192.168.40.129 and client node: 192.168.40.129
  
-Execute the following command on master only. Calico CNI expects --pod-network-cidr=192.168.0.0/16
+#Execute the following command on master only. Calico CNI expects --pod-network-cidr=192.168.0.0/16
 
 sudo kubeadm init --apiserver-advertise-address=192.168.40.129 --pod-network-cidr=192.168.40.0/16
 
@@ -77,11 +84,14 @@ kubectl get nodes (shows not ready)
 kubectl apply -f https://raw.githubusercontent.com/projectcalico/calico/v3.29.0/manifests/calico.yaml
 kubectl get nodes (shows now as ready)
  
-
-Go to worker Node and enter join command which copied from the output of kubeadm init command in master node and paste it in worker node to join the cluster.
+#Add Worker Nodes (Optional)
+#Go to worker Node and enter join command which copied from the output of kubeadm init command in master node and paste it in worker node to join the cluster.
 
 kubeadm join 192.168.153.129:6443 --token 1h87e3.tsctnz8wn6nywmt5 
 --discovery-token-ca-cert-hash sha256:8622e5c98b08314ab89c8637b3162f782eed255368ee66e026939511688d3283
+
+
+
 
 In master Node
 kubectl get nodes (now it will show worker node added and ready)
