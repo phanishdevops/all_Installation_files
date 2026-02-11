@@ -86,7 +86,7 @@ kubeadm join 192.168.153.129:6443 --token 1h87e3.tsctnz8wn6nywmt5
 In master Node
 kubectl get nodes (now it will show worker node added and ready)
 ........................................................................................................................
-Below command will show which pod is in which worker node with pod IP's
+Below command in master node will show which pod is in which worker node with there pod IP's
 kubectl get pods -o wide
 
 NAME      READY   STATUS    RESTARTS   AGE   IP               NODE                  NOMINATED NODE   READINESS GATES
