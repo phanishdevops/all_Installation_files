@@ -1,0 +1,25 @@
+yum update -y
+
+#Jenkins requires Java. Install OpenJDK 21 or 17
+yum install java-21-openjdk-devel -y
+
+#Add the Jenkins Repository
+#Download the repository file to /etc/yum.repos.d/.
+sudo wget -O /etc/yum.repos.d/jenkins.repo https://pkg.jenkins.io/redhat-stable/jenkins.repo
+
+
+#Import the GPG key to verify package signatures.
+sudo rpm --import https://pkg.jenkins.io/redhat-stable/jenkins.io-2023.key
+
+#Update your cache and install the latest stable version.
+sudo yum install jenkins -y
+
+#Start the service and configure it to run at boot
+sudo systemctl start jenkins
+sudo systemctl enable jenkins
+sudo systemctl status jenkins
+
+#If the firewalld is active, allow traffic on port 8080
+sudo firewall-cmd --permanent --add-port=8080/tcp
+sudo firewall-cmd --reload
+
