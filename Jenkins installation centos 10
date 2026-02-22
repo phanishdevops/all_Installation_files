@@ -1,7 +1,7 @@
 yum update -y
 
 #Jenkins requires Java. Install OpenJDK 21 or 17
-yum install java-21-openjdk-devel -y
+sudo yum install java-21-openjdk-devel -y
 
 #Add the Jenkins Repository
 #Download the repository file to /etc/yum.repos.d/.
