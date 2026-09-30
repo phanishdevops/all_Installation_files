@@ -6,7 +6,7 @@
 
 chmod +x ./kind
 
-mv ./kind /some-dir-in-your-PATH/kind
+mv ./kind /usr/local/bin/kind
 
 #To install kind use: 
 go install sigs.k8s.io/kind@v0.33.0
