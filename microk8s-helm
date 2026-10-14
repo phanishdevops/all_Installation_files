@@ -1,0 +1,37 @@
+# Install snap on Ubuntu
+sudo apt update
+sudo apt install snapd
+
+# Install MicroK8s on Linux
+sudo snap install microk8s --classic
+
+# Check the status while Kubernetes starts
+microk8s status --wait-ready
+
+# Download the latest stable kubectl binary
+curl -LO "https://dl.k8s.io/release/$(curl -L -s https://dl.k8s.io/release/stable.txt)/bin/linux/amd64/kubectl"
+
+# Install the binary to your local path
+sudo install -o root -g root -m 0755 kubectl /usr/local/bin/kubectl
+
+# Export the MicroK8s configuration so the standalone kubectl can connect to it
+mkdir -p ~/.kube
+microk8s config > ~/.kube/config
+
+# Verify the setup and restart the machine
+kubectl cluster-info
+
+
+Installing HELM
+
+curl -fsSL https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4 | bash
+
+# or below enter commands
+curl -fsSL -o get_helm.sh https://raw.githubusercontent.com/helm/helm/main/scripts/get-helm-4
+chmod 700 get_helm.sh
+./get_helm.sh
+
+# To get kubernetes dashboard
+microk8s dashboard-proxy
+
+
